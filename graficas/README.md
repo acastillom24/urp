@@ -1,13 +1,7 @@
-<style>
-  .centrado {
-    text-align: center;
-  }
-</style>
-
 ## Gráfico de pirámide población
 
-<div class="centrado">
-  <img src="img/piramide_1.jpeg" alt="Pirámide Poblacional" width="500"/>
+<div style="text-align: center;">
+  <img src="img/piramide_1.jpeg" alt="Pirámide Poblacional" width="400"/>
 </div>
 
 ```r
