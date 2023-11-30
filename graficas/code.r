@@ -36,7 +36,7 @@ pyramid::pyramid(
 
 ### Datos
 linelist <- base::readRDS(
-  file = "graficas/linelist_cleaned.rds"
+  file = "graficas/data/linelist_cleaned.rds"
 )
 
 ### Gráfico

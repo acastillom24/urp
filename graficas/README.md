@@ -40,12 +40,12 @@ pyramid::pyramid(
 <img src="img/piramide_2.jpeg" alt="Pirámide Poblacional" width="400"/>
 
 ```r
-### Datos
+# Datos
 linelist <- base::readRDS(
-  file = "graficas/linelist_cleaned.rds"
+  file = "graficas/data/linelist_cleaned.rds"
 )
 
-### Gráfico
+# Gráfico
 apyramid::age_pyramid(
   data = linelist,
   age_group = "age_cat5",
