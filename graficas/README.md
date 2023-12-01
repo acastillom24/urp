@@ -70,7 +70,7 @@ apyramid::age_pyramid(
     axis.title = ggplot2::element_text(size = 12, face = "bold"))
 ```
 
-# Usando: `ggplot2` - Opción 1
+## Usando: `ggplot2` - Opción 1
 
 <img src="img/piramide_3.jpeg" alt="Pirámide Poblacional" width="400"/>
 
@@ -127,7 +127,7 @@ ggplot2::ggplot() +
     legend.justification = 'center')
 ```
 
-# Usando: `ggplot2` - Opción 2
+## Usando: `ggplot2` - Opción 2
 
 <img src="img/piramide_4.jpeg" alt="Pirámide Poblacional" width="400"/>
 
