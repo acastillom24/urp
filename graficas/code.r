@@ -36,7 +36,7 @@ pyramid::pyramid(
 
 ### Datos
 linelist <- base::readRDS(
-  file = "graficas/data/linelist_cleaned.rds"
+  file = "data/linelist_cleaned.rds"
 )
 
 ### Gráfico
@@ -63,100 +63,116 @@ apyramid::age_pyramid(
     axis.text = ggplot2::element_text(size = 10, face = "bold"),
     axis.title = ggplot2::element_text(size = 12, face = "bold"))
 
+## Usando: `ggplot2` - Opción 1 ----
 
-
-
-#INFORMACION DE BRAZIL
-# Load packages
-library(ggplot2)
-library(tidyverse)
-
-# Load data
+### Datos
 url <- 'https://www.populationpyramid.net/api/pp/76/2019/?csv=true'
-data <- read.csv(url)
-head(data)
+data <- utils::read.csv(url)
 
-# Manipulating data
-data <- data%>%
-  pivot_longer(names_to = 'Gender', values_to = 'Population', cols = 2:3) %>%
-  mutate(PopPerc=case_when(Gender=='M'~round(Population/sum(Population)*100,2),
-                           TRUE~-round(Population/sum(Population)*100,2)),
-         signal=case_when(Gender=='M'~1,
-                          TRUE~-1))
-head(data)
-levels(data$Age)
+data <- 
+  data |> 
+  tidyr::pivot_longer(
+    names_to = 'Gender', 
+    values_to = 'Population', 
+    cols = 2:3) |> 
+  dplyr::mutate(
+    PopPerc = dplyr::case_when(
+      Gender == 'M' ~ base::round(Population/base::sum(Population)*100,2),
+      TRUE ~ - base::round(Population/base::sum(Population)*100,2)),
+    signal = dplyr::case_when(
+      Gender == 'M' ~ 1,
+      TRUE ~ -1),
+    Age = base::factor(Age, levels = base::unique(Age), ordered = TRUE))
 
-data$Age <- factor(data$Age,levels=unique(data$Age),ordered=TRUE)
+### Gráfico
+data |> 
+ggplot2::ggplot() +
+  ggplot2::geom_bar(
+    mapping = ggplot2::aes(x = Age, y = PopPerc, fill = Gender), stat = 'identity') +
+  ggplot2::geom_text(
+    mapping = ggplot2::aes(
+      x = Age, 
+      y = PopPerc + signal * .3, 
+      label = base::abs(PopPerc))) +
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(name = '', values = c('darkred', 'steelblue')) +
+  ggplot2::scale_y_continuous(
+    breaks = base::seq(-10,10,1),
+    labels = function(x){base::paste(base::abs(x), '%')}) +
+  ggplot2::labs(
+    x = '',
+    y = 'Population (%)',
+    title = 'Population Pyramid of Brazil',
+    subtitle = base::paste(
+      'Total resident population in 2019:', 
+      base::format(base::sum(data$Population), decimal.mark = '.')),
+    caption = 'Source: PopulationPyramid.net') +
+  cowplot::theme_cowplot() +
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_text(vjust = .5),
+    panel.grid.major.y = ggplot2::element_line(
+      color = 'lightgray', 
+      linetype = 'dashed'),
+    legend.position = 'top',
+    legend.justification = 'center')
 
-# Plotting
-ggplot(data)+
-  geom_bar(aes(x=Age,y=PopPerc,fill=Gender),stat='identity')+
-  geom_text(aes(x=Age,y=PopPerc+signal*.3,label=abs(PopPerc)))+
-  coord_flip()+
-  scale_fill_manual(name='',values=c('darkred','steelblue'))+
-  scale_y_continuous(breaks=seq(-10,10,1),
-                     labels=function(x){paste(abs(x),'%')})+
-  labs(x='',y='Population (%)',
-       title='Population Pyramid of Brazil',
-       subtitle=paste('Total resident population in 2019:', format(sum(data$Population),big.mark='.')),
-       caption='Source: PopulationPyramid.net')+
-  cowplot::theme_cowplot()+
-  theme(axis.text.x=element_text(vjust=.5),
-        panel.grid.major.y = element_line(color='lightgray',linetype='dashed'),
-        legend.position = 'top',
-        legend.justification = 'center')
+## Usando: `ggplot2` - Opción 2 ----
+### Datos
+df <- base::data.frame(
+  Type = base::sample(c('Male', 'Female', 'Female'), 1000, replace=TRUE),
+  Age = sample(18:60, 1000, replace=TRUE))
 
-
-# generando data frame
-
-
-
-library(ggplot2)
-library(plyr)
-library(gridExtra)
-
-## The Data
-df <- data.frame(Type = sample(c('Male', 'Female', 'Female'), 1000, replace=TRUE),
-                 Age = sample(18:60, 1000, replace=TRUE))
-
-AgesFactor <- ordered(cut(df$Age, breaks = c(18,seq(20,60,5)), 
-                          include.lowest = TRUE))
+AgesFactor <- base::ordered(
+  base::cut(
+    df$Age, breaks = c(18, base::seq(20,60,5)),
+    include.lowest = TRUE))
 
 df$Age <- AgesFactor
 
-## Plotting
-gg <- ggplot(data = df, aes(x=Age))
+### Gráfico
+gg <- ggplot2::ggplot(data = df, mapping = ggplot2::aes(x = Age))
 
 gg.male <- gg + 
-  geom_bar( data=subset(df,Type == 'Male'), 
-            aes( y = ..count../sum(..count..), fill = Age)) +
-  scale_y_continuous('', labels = scales::percent) + 
-  theme(legend.position = 'none',
-        axis.title.y = element_blank(),
-        plot.title = element_text(size = 11.5),
-        plot.margin=unit(c(0.1,0.2,0.1,-.1),"cm"),
-        axis.ticks.y = element_blank(), 
-        axis.text.y = theme_bw()$axis.text.y) + 
-  ggtitle("Male") + 
-  coord_flip()    
+  ggplot2::geom_bar(
+    data = base::subset(df, Type == 'Male'),
+    mapping = ggplot2::aes(
+      y = ..count../base::sum(ggplot2::after_stat(count)), 
+      fill = Age)) +
+  ggplot2::scale_y_continuous(name = '', labels = scales::percent) + 
+  ggplot2::theme(
+    legend.position = 'none',
+    axis.title.y = ggplot2::element_blank(),
+    plot.title = ggplot2::element_text(size = 11.5),
+    plot.margin = grid::unit(c(0.1,0.2,0.1,-.1), "cm"),
+    axis.ticks.y = ggplot2::element_blank(), 
+    axis.text.y = ggplot2::theme_bw()$axis.text.y) + 
+  ggplot2::ggtitle("Male") + 
+  ggplot2::coord_flip()    
 
-gg.female <-  gg + 
-  geom_bar( data=subset(df,Type == 'Female'), 
-            aes( y = ..count../sum(..count..), fill = Age)) +
-  scale_y_continuous('', labels = scales::percent, 
-                     trans = 'reverse') + 
-  theme(legend.position = 'none',
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(), 
-        plot.title = element_text(size = 11.5),
-        plot.margin=unit(c(0.1,0,0.1,0.05),"cm")) + 
-  ggtitle("Female") + 
-  coord_flip() + 
-  ylab("Age")
+gg.female <- gg + 
+  ggplot2::geom_bar(
+    data = base::subset(df, Type == 'Female'), 
+    mapping = ggplot2::aes(
+      y = ..count../base::sum(ggplot2::after_stat(count)), 
+      fill = Age)) +
+  ggplot2::scale_y_continuous(
+    name = '', 
+    labels = scales::percent, 
+    trans = 'reverse') + 
+  ggplot2::theme(
+    legend.position = 'none',
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(), 
+    plot.title = ggplot2::element_text(size = 11.5),
+    plot.margin = grid::unit(c(0.1,0,0.1,0.05), "cm")) + 
+  ggplot2::ggtitle("Female") + 
+  ggplot2::coord_flip() + 
+  ggplot2::ylab("Age")
 
-## Plutting it together
-grid.arrange(gg.female,
-             gg.male,
-             widths=c(0.4,0.6),
-             ncol=2
+gridExtra::grid.arrange(
+  gg.female,
+  gg.male,
+  widths = c(0.4,0.6),
+  ncol = 2
 )
+
