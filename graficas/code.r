@@ -98,7 +98,7 @@ ggplot2::ggplot() +
   ggplot2::scale_fill_manual(name = '', values = c('darkred', 'steelblue')) +
   ggplot2::scale_y_continuous(
     breaks = base::seq(-10,10,1),
-    labels = function(x){base::paste(base::abs(x), '%')}) +
+    labels = {\(x) base::paste(base::abs(x), '%')}) +
   ggplot2::labs(
     x = '',
     y = 'Population (%)',
