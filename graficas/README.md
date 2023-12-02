@@ -1,7 +1,8 @@
 # Gráficos de Barras Apiladas 
 
-| (1) | (2) | (3) |
+| | | |
 | :---: | :---: | :---: |
+| (1) | (2) | (3) |
 | ![Barra Apiladas 1](img/barras_apiladas_1.jpeg) | ![Barra Apiladas 2](img/barras_apiladas_2.jpeg) | ![Barra Apiladas 3](img/barras_apiladas_3.jpeg) |
 
 ## Preparación de los datos
@@ -170,20 +171,10 @@ Productos_new |>
 
 # Gráficos de puntos
 
-<div style="display: flex;">
-    <div style="margin-right: 10px;">
-      <figcaption style="text-align: center;">(1)</figcaption>
-      <img src="img/puntos_1.jpeg" alt="Puntos 1" width="400"/>
-    </div>
-    <div style="margin-right: 10px;">
-      <figcaption style="text-align: center;">(2)</figcaption>
-      <img src="img/puntos_2.jpeg" alt="Puntos 2" width="400"/>
-    </div>
-    <div>
-      <figcaption style="text-align: center;">(3)</figcaption>
-      <img src="img/puntos_3.jpeg" alt="Puntos 3" width="400"/>
-    </div>
-</div>
+| | | |
+| :---: | :---: | :---: |
+| (1) | (2) | (3) |
+| ![Puntos 1](img/puntos_1.jpeg) | ![Puntos 2](img/puntos_2.jpeg) | ![Puntos 3](img/puntos_3.jpeg) |
 
 ## Preparación de los datos
 ```r
