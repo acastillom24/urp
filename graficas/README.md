@@ -1,19 +1,8 @@
 # Gráficos de Barras Apiladas 
 
-<div style="display: flex;">
-    <div style="margin-right: 10px;">
-      <figcaption style="text-align: center;">(1)</figcaption>
-      <img src="img/barras_apiladas_1.jpeg" alt="Barra Apiladas 1" width="400"/>
-    </div>
-    <div style="margin-right: 10px;">
-      <figcaption style="text-align: center;">(2)</figcaption>
-      <img src="img/barras_apiladas_2.jpeg" alt="Barra Apiladas 2" width="400"/>
-    </div>
-    <div>
-      <figcaption style="text-align: center;">(3)</figcaption>
-      <img src="img/barras_apiladas_3.jpeg" alt="Barra Apiladas 3" width="400"/>
-    </div>
-</div>
+| (1) | (2) | (3) |
+| :---: | :---: | :---: |
+| ![Barra Apiladas 1](img/barras_apiladas_1.jpeg) | ![Barra Apiladas 2](img/barras_apiladas_2.jpeg) | ![Barra Apiladas 3](img/barras_apiladas_3.jpeg) |
 
 ## Preparación de los datos
 
