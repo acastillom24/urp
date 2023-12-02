@@ -230,28 +230,12 @@ graphics::dotchart(
 
 # Gráficos Dembbell
 
-<div style="display: flex; flex-wrap: wrap;">
-    <div style="margin-right: 10px; flex: 1;">
-        <div style="margin-bottom: 10px;">
-            <figcaption style="text-align: center;">(1)</figcaption>
-            <img src="img/dembbell_1.jpeg" alt="Dembbbell 1" width="400"/>
-        </div>
-        <div>
-            <figcaption style="text-align: center;">(2)</figcaption>
-            <img src="img/dembbell_2.jpeg" alt="Dembbbell 2" width="400"/>
-        </div>
-    </div>
-    <div style="margin-right: 10px; flex: 1;">
-        <div style="margin-bottom: 10px;">
-            <figcaption style="text-align: center;">(3)</figcaption>
-            <img src="img/dembbell_3.jpeg" alt="Dembbbell 3" width="400"/>
-        </div>
-        <div>
-            <figcaption style="text-align: center;">(4)</figcaption>
-            <img src="img/dembbell_4.jpeg" alt="Dembbbell 4" width="400"/>
-        </div>
-    </div>
-</div>
+| | |
+| :---: | :---: |
+| (1) | (2) |
+| ![Puntos 1](img/dembbell_1.jpeg) | ![Puntos 2](img/dembbell_2.jpeg) |
+| (3) | (4) |
+| ![Puntos 3](img/dembbell_3.jpeg) | ![Puntos 4](img/dembbell_4.jpeg) |
 
 ## Preparación de los datos
 
