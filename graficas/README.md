@@ -1,3 +1,645 @@
+# Gráficos de Barras Apiladas 
+
+<div style="display: flex;">
+    <div style="margin-right: 10px;">
+      <figcaption style="text-align: center;">(1)</figcaption>
+      <img src="img/barras_apiladas_1.jpeg" alt="Barra Apiladas 1" width="400"/>
+    </div>
+    <div style="margin-right: 10px;">
+      <figcaption style="text-align: center;">(2)</figcaption>
+      <img src="img/barras_apiladas_2.jpeg" alt="Barra Apiladas 2" width="400"/>
+    </div>
+    <div>
+      <figcaption style="text-align: center;">(3)</figcaption>
+      <img src="img/barras_apiladas_3.jpeg" alt="Barra Apiladas 3" width="400"/>
+    </div>
+</div>
+
+## Preparación de los datos
+
+```r
+Productos <- 
+  utils::read.csv(
+    file = "data/Productos.csv",
+    sep = ';',
+    header = TRUE)
+
+Productos_new <- 
+  plyr::ddply(
+    .data = Productos, 
+    .variables = plyr::.(year),
+    .fun = base::transform, 
+    pos = 100 - (cumsum(percentage) - (0.8 * percentage)))
+
+# Obtener nuevas fuentes
+
+if (!base::file.exists("./.fonts")){
+  base::dir.create(path = "./.fonts")
+}
+
+utils::download.file(
+  url = "http://simonsoftware.se/other/xkcd.ttf",
+  dest = ".fonts/xkcd.ttf", 
+  mode = "wb")
+```
+
+## Gráficos
+```r
+# (1)
+colores <- c("#99CC55", "#CCCC99")
+
+Productos_new |> 
+  ggplot2::ggplot() + 
+  ggplot2::geom_bar(
+    mapping = ggplot2::aes(
+      y = percentage, 
+      x = year, 
+      fill = product),
+    stat = "identity") +
+  ggplot2::geom_text(
+    data = Productos_new, 
+    mapping = ggplot2::aes(
+      x = year, 
+      y = pos, 
+      label = base::paste0(percentage,"%")),
+    size=4) + 
+  ggplot2::geom_text(
+    data = Productos_new, 
+    mapping = ggplot2::aes(
+      x = year, 
+      y = pos, 
+      label = base::paste0(percentage,"%")),
+    size = 4) + 
+  ggplot2::scale_x_continuous(breaks = base::seq(2006, 2014, 1)) + 
+  ggplot2::labs(
+    x = "Año", 
+    y = "Porcentaje") +
+  ggplot2::scale_y_continuous(
+    labels = scales::dollar_format(
+      suffix = "%", 
+      prefix = "")) +
+  ggplot2::ggtitle("Composición de exportación de china (%)") +
+  ggplot2::scale_fill_manual(values = colores)
+
+# (2)
+
+extrafont::font_import(
+  paths = "./.fonts/",
+  pattern = ".*\\.ttf")
+
+extrafont::fonts()
+extrafont::loadfonts()
+
+fill <- c("#56B4E9", "#F0E442")
+
+Productos_new |> 
+  ggplot2::ggplot() +
+  ggplot2::geom_bar(
+    mapping = ggplot2::aes(
+      y = percentage, 
+      x = year, 
+      fill = product), 
+    stat = "identity") +
+  ggplot2::geom_text(
+    data = Productos_new, 
+    mapping = ggplot2::aes(
+      x = year, 
+      y = pos, 
+      label = paste0(percentage,"%")),
+    colour = "black", 
+    family = "xkcd-Regular", 
+    size = 5, 
+    show.legend = F) +
+  ggplot2::theme(
+    legend.position = "bottom", 
+    legend.direction = "horizontal",
+    legend.title = ggplot2::element_blank()) +
+  ggplot2::scale_x_continuous(breaks = seq(2006, 2014, 1)) +
+  ggplot2::scale_y_continuous(labels = scales::dollar_format(
+    suffix = "%", 
+    prefix = "")) +
+  ggplot2::labs(
+    x = "Año", 
+    y = "Porcentaje") +
+  ggplot2::ggtitle("Composición de exportación de China (%)") +
+  ggplot2::scale_fill_manual(values = fill) +
+  ggplot2::theme(
+    axis.line = ggplot2::element_line(
+      size = 1, 
+      colour = "black"),
+    panel.grid.major = ggplot2::element_blank(), 
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.border = ggplot2::element_blank(), 
+    panel.background = ggplot2::element_blank()) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(
+      family = "xkcd-Regular"), 
+    text = ggplot2::element_text(family="xkcd-Regular"),
+    axis.text.x = ggplot2::element_text(
+      colour = "black", 
+      size = 10),
+    axis.text.y = ggplot2::element_text(
+      colour = "black", 
+      size = 10))
+
+# (3)
+Productos_new |> 
+  ggplot2::ggplot() + 
+  ggthemes::theme_economist() + 
+  ggthemes::scale_fill_economist() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(family = "OfficinaSanITC-Book"),
+    text = ggplot2::element_text(family = "OfficinaSanITC-Book")) +
+  ggplot2::geom_bar(
+    mapping = ggplot2::aes(
+      y = percentage, 
+      x = year, 
+      fill = product),
+    stat="identity") +
+  ggplot2::geom_text(
+    data = Productos_new, 
+    mapping = ggplot2::aes(
+      x = year, 
+      y = pos, 
+      label = base::paste0(percentage,"%")),
+    colour = "white", 
+    family = "OfficinaSanITC-Book", 
+    size = 4) +
+  ggplot2::theme(
+    legend.position = "bottom", 
+    legend.direction = "horizontal",
+    legend.title = ggplot2::element_blank()) +
+  ggplot2::scale_x_continuous(breaks = base::seq(2006, 2014, 1)) +
+  ggplot2::scale_y_continuous(labels = scales::dollar_format(
+    suffix = "%", 
+    prefix = "")) +
+  ggplot2::labs(
+    x = "Año", 
+    y = "Porcentaje") +
+  ggplot2::ggtitle("Composición de exportación de China (%)")
+```
+
+# Gráficos de puntos
+
+<div style="display: flex;">
+    <div style="margin-right: 10px;">
+      <figcaption style="text-align: center;">(1)</figcaption>
+      <img src="img/puntos_1.jpeg" alt="Puntos 1" width="400"/>
+    </div>
+    <div style="margin-right: 10px;">
+      <figcaption style="text-align: center;">(2)</figcaption>
+      <img src="img/puntos_2.jpeg" alt="Puntos 2" width="400"/>
+    </div>
+    <div>
+      <figcaption style="text-align: center;">(3)</figcaption>
+      <img src="img/puntos_3.jpeg" alt="Puntos 3" width="400"/>
+    </div>
+</div>
+
+## Preparación de los datos
+```r
+Ventas <- 
+  base::data.frame(
+    mes = month.name, 
+    esperado = c(15, 16, 20, 31, 11, 6, 17, 22, 32, 12, 19, 20), 
+    vendido = c(8, 18, 12, 10, 41, 2, 19, 26, 14, 16, 9, 13), 
+    trimestre = c(
+      base::rep(1, 3), 
+      base::rep(2, 3), 
+      base::rep(3, 3), 
+      base::rep(4, 3)))
+
+colores <- numeric(4)
+
+colores[Ventas$trimestre == "1"] <- "red"
+colores[Ventas$trimestre == "2"] <- "blue"
+colores[Ventas$trimestre == "3"] <- "green"
+colores[Ventas$trimestre == "4"] <- "orange"
+```
+
+## Gráficos
+
+```r
+# (1)
+graphics::dotchart(
+  x = Ventas$vendido, 
+  labels = Ventas$mes, 
+  pch = 21, 
+  bg = "green", 
+  pt.cex = 1.5)
+
+# (2)
+graphics::dotchart(
+  x = Ventas$esperado, 
+  labels = Ventas$mes, 
+  pch = 19,
+  pt.cex = 1.5, 
+  groups = base::rev(Ventas$trimestre), 
+  color = colores)
+
+# (3)
+graphics::dotchart(
+  x = x$esperado, 
+  labels = x$mes, 
+  pch = 19,
+  xlim = base::range(x$esperado, x$vendido) + c(-2, 2),
+  pt.cex = 1.5, 
+  color = colores, 
+  groups = base::rev(Ventas$trimestre))
+```
+
+# Gráficos Dembbell
+
+<div style="display: flex; flex-wrap: wrap;">
+    <div style="margin-right: 10px; flex: 1;">
+        <div style="margin-bottom: 10px;">
+            <figcaption style="text-align: center;">(1)</figcaption>
+            <img src="img/dembbell_1.jpeg" alt="Dembbbell 1" width="400"/>
+        </div>
+        <div>
+            <figcaption style="text-align: center;">(2)</figcaption>
+            <img src="img/dembbell_2.jpeg" alt="Dembbbell 2" width="400"/>
+        </div>
+    </div>
+    <div style="margin-right: 10px; flex: 1;">
+        <div style="margin-bottom: 10px;">
+            <figcaption style="text-align: center;">(3)</figcaption>
+            <img src="img/dembbell_3.jpeg" alt="Dembbbell 3" width="400"/>
+        </div>
+        <div>
+            <figcaption style="text-align: center;">(4)</figcaption>
+            <img src="img/dembbell_4.jpeg" alt="Dembbbell 4" width="400"/>
+        </div>
+    </div>
+</div>
+
+## Preparación de los datos
+
+```r
+data_Politica <- 
+  base::data.frame(
+    stringsAsFactors = TRUE,
+    Propuestas = c(
+      "Propuesta 1","Propuesta 2", "Propuesta 3","Propuesta 4","Propuesta 5",
+      "Propuesta 6","Propuesta 7","Propuesta 8","Propuesta 9"),
+    Republicanos = c(45L, 50L, 65L, 45L, 40L, 55L, 78L, 55L, 65L),
+    Democratas = c(65L, 70L, 90L, 30L, 20L, 59L, 70L, 60L, 55L))
+
+TasaHomicidios <-
+  base::data.frame(
+    stringsAsFactors = TRUE,
+    check.names = FALSE,
+    Ciudades = c(
+      "Ciudad 1","Ciudad 2","Ciudad 3","Ciudad 4",
+      "Ciudad 5","Ciudad 6","Ciudad 7","Ciudad 8"),
+    `1990` = c(30, 50, 80, 10, 50, 30, 40, 50),
+    `2022` = c(33, 56, 110, 20, 30, 12, 20, 20))
+
+EsperanzaVida <- 
+  utils::read.csv(
+    file = "data/EsperanzaVida.csv",
+    sep = ';',
+    header = TRUE)
+
+EsperanzaVida <- 
+  EsperanzaVida |> 
+  dplyr::filter(year %in% c(1952,2007)) |> 
+  dplyr::filter(continent == "Asia") |> 
+  dplyr::mutate(
+    paired = base::rep(1:(dplyr::n()/2), each = 2),
+    year = base::factor(year))
+```
+
+## Gráficos
+```r
+# (1): `ggplot2`
+data_Politica |> 
+  ggplot2::ggplot() +
+  ggplot2::geom_segment(
+    mapping = ggplot2::aes(
+      x = Democratas, 
+      xend = Republicanos,
+      y = Propuestas, 
+      yend = Propuestas)) +
+  ggplot2::geom_point(
+    mapping = ggplot2::aes(
+      x = Democratas, 
+      y = Propuestas), 
+    size = 5,
+    color="blue") +
+  ggplot2::labs(title = "Gráfico de Dembbell") +
+  ggplot2::xlab("% Participación") +
+  ggplot2::geom_point(
+    mapping = ggplot2::aes(
+      x = Republicanos, 
+      y = Propuestas), 
+    size = 5,
+    color = "red") +
+  ggplot2::xlim(0, 100)
+
+# (2): `ggalt`
+ggplot2::ggplot(
+  data = data_Politica, 
+  mapping = ggplot2::aes(
+    y = Propuestas,
+    x = Democratas,
+    xend = Republicanos)) + 
+  ggalt::geom_dumbbell(
+    size_x = 5,
+    size_xend = 5,
+    color = "black",
+    colour_x = "blue",
+    colour_xend = "red") +
+  ggplot2::labs(
+    title = "% de aprobación de propuestas entre demócratas y republicanos",
+    x = "% de aprobación") +
+  ggplot2::xlim(0, 100)
+
+# (3)
+TasaHomicidios |> 
+  dplyr::mutate(
+    Ciudades = forcats::fct_reorder(Ciudades, `2022`)) |> 
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(
+      y = Ciudades,
+      x = `1990`,
+      xend = `2022`)) + 
+  ggalt::geom_dumbbell(
+    size_x = 5,
+    size_xend = 5,
+    color = "black",
+    colour_x = "green",
+    colour_xend = "red",) +
+  ggplot2::labs(
+    x = "Homicidios cada 100.000 hab. 1990 (verde) / 2022 (rojo)") +
+  ggplot2::xlim(0, 120)
+
+# (4)
+EsperanzaVida |> 
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(
+      x = lifeExp, 
+      y = stats::reorder(country, lifeExp))) +
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(group = paired),
+    color = "grey") +
+  ggplot2::geom_point(
+    mapping = ggplot2::aes(color = year), size = 4) +
+  ggplot2::labs(y = "Países de Asia") +
+  ggplot2::theme_classic(14) +
+  ggplot2::theme(legend.position = "top") +
+  ggplot2::labs(title = "Evolución de la esperanza de Vida") +
+  ggplot2::xlab("Esperanza de vida") +
+  ggplot2::scale_color_brewer(
+    palette = "Accent", 
+    direction = -1)
+```
+
+# Gráfico de líneas
+
+## Opción 1
+
+<img src="img/series_01.jpeg" alt="Series" width="400"/>
+
+```r
+# Datos
+Empleados <- 
+  utils::read.csv(
+    file = "data/empleados.csv",
+    encoding = "latin1",
+    sep = ";")
+
+# Gráfico
+Empleados |>  
+  dplyr::group_by(educacion, Sexo) |>  
+  dplyr::summarise(Prom = base::mean(Sueldo_actual)) |> 
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(
+      x = educacion,
+      y = Prom,
+      color = Sexo)) +
+  ggplot2::geom_line(lwd = 1.1) +
+  ggplot2::geom_point(size = 3) +
+  ggplot2::facet_wrap(
+    ~ "Evolución del sueldo promedio de acuerdo a lo años de estudio según género")
+```
+
+## Opción 2
+
+<div style="display: flex;">
+    <div style="margin-right: 10px;">
+        <img src="img/series_02_1.jpeg" alt="Series 1" width="400"/>
+    </div>
+    <div>
+        <img src="img/series_02_2.jpeg" alt="Series 2" width="400"/>
+    </div>
+</div>
+
+```r
+# Datos
+Empleados <- 
+  utils::read.csv(
+    file = "data/empleados.csv",
+    encoding = "latin1",
+    sep = ";")
+
+# Gráfico
+Empleados |> 
+  dplyr::mutate(
+    anios_estudios = dplyr::case_when(
+      educacion == 12 ~ "2",
+      educacion > 12 & educacion <= 14 ~ "3",
+      educacion > 14 & educacion <= 18 ~ "4",
+      educacion > 18 ~ "5",
+      TRUE ~ "1")) |> 
+  dplyr::group_by(experiencia, anios_estudios) |>  
+  dplyr::summarise(Prom = base::mean(Sueldo_actual)) |> 
+  ggplot2::ggplot(
+    data = ResumenAniosEst,
+    mapping = ggplot2::aes(
+      x = experiencia,
+      y = Prom,
+      color = anios_estudios)) +
+  ggplot2::geom_line(lwd = 0.9) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::scale_color_manual(
+    values = c("#D43F3A", "#EEA236", "#5CB85C", "#46B8DA", "#9632B8"),
+    labels = c("Basica", "Media", "Técnica", "Universitaria", "Postgrado")) +
+  ggplot2::facet_wrap(
+    ~ "Evolución del sueldo promedio de acuerdo a la experiencia segun segun nivel de estudio")
+```
+
+## Opción 3
+
+<div style="display: flex;">
+    <div style="margin-right: 10px;">
+        <img src="img/series_03_1.jpeg" alt="Series 1" width="400"/>
+    </div>
+    <div style="margin-right: 10px;">
+        <img src="img/series_03_2.jpeg" alt="Series 2" width="400"/>
+    </div>
+    <div>
+        <img src="img/series_03_3.jpeg" alt="Series 3" width="400"/>
+    </div>
+</div>
+
+```r
+# Datos
+Empleados <- 
+  utils::read.csv(
+    file = "data/empleados.csv",
+    encoding = "latin1",
+    sep = ";")
+
+# Gráfico
+Empleados |> 
+  dplyr::mutate(
+    anios_estudios = dplyr::case_when(
+      educacion == 12 ~ "2",
+      educacion > 12 & educacion <= 14 ~ "3",
+      educacion > 14 & educacion <= 18 ~ "4",
+      educacion > 18 ~ "5",
+      TRUE ~ "1")) |> 
+  dplyr::group_by(experiencia, anios_estudios) |>  
+  dplyr::summarise(Prom = base::mean(Sueldo_actual)) |> 
+  ggplot2::ggplot(
+    data = ResumenAniosEst, 
+    mapping = ggplot2::aes(
+      x = experiencia, 
+      y = Prom, 
+      group = anios_estudios)) + 
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(color = anios_estudios),
+    lwd = 0.9) + 
+  ggplot2::scale_color_discrete(
+    labels = c("Basica","Media","Técnica","Universitaria","Postgrado")) +
+  ggplot2::facet_wrap(~ anios_estudios) +
+  ggplot2::theme_light()
+```
+
+# Gráfico de serie temporal
+
+## Opción 4
+
+<div style="display: flex;">
+    <div style="margin-right: 10px;">
+        <img src="img/series_04_1.jpeg" alt="Series 1" width="400"/>
+    </div>
+    <div>
+        <img src="img/series_04_2.jpeg" alt="Series 2" width="400"/>
+    </div>
+</div>
+
+```r
+# Datos
+economics <- ggplot2::economics
+
+df <- 
+  economics |> 
+  dplyr::filter(date > base::as.Date("2000-01-01"))
+
+# Gráfico
+ggplot2::ggplot(
+  data = df, 
+  mapping = ggplot2::aes(x = date, y = unemploy)) +
+  ggplot2::geom_line() +
+  ggpmisc::stat_peaks(
+    geom = "point", 
+    span = 15, 
+    color = "steelblue3", 
+    size = 2) +
+  ggpmisc::stat_peaks(
+    geom = "label", 
+    span = 15, 
+    color = "steelblue3", 
+    angle = 0,
+    hjust = -0.1, 
+    x.label.fmt = "%Y-%m-%d") +
+  ggpmisc::stat_peaks(
+    geom = "rug", 
+    span = 15, 
+    color = "blue", 
+    sides = "b")
+
+ggplot2::ggplot(
+  data = df, 
+  mapping = ggplot2::aes(x = date, y = unemploy)) +
+  ggplot2::geom_line() +
+  ggpmisc::stat_valleys(
+    geom = "point", 
+    span = 11, 
+    color = "red", 
+    size = 2) +
+  ggpmisc::stat_valleys(
+    geom = "label", 
+    span = 11, 
+    color = "red", 
+    angle = 0,
+    hjust = -0.1, 
+    x.label.fmt = "%Y-%m-%d") +
+  ggpmisc::stat_valleys(
+    geom = "rug", 
+    span = 11, 
+    color = "red", 
+    sides = "b")
+```
+
+## Opción 5
+
+<img src="img/series_05.jpeg" alt="Series" width="400"/>
+
+```r
+# Datos
+economics <- ggplot2::economics
+
+df <- 
+  economics |> 
+  dplyr::filter(date > base::as.Date("2000-01-01"))
+
+# Gráfico
+shade <- base::data.frame(
+  x1 = c(as.Date("2000-01-01"), as.Date("2010-01-01")),
+  x2 = c(as.Date("2004-01-01"), as.Date("2015-01-01")),
+  min = c(-Inf, -Inf), max = c(Inf, Inf))
+
+ggplot2::ggplot() +
+  ggplot2::geom_line(
+    data = df, 
+    mapping = ggplot2::aes(x = date, y = unemploy)) +
+  ggplot2::geom_rect(
+    data = shade, 
+    mapping = ggplot2::aes(
+      xmin = x1, 
+      xmax = x2, 
+      ymin = min, 
+      ymax = max),
+    fill = c("green", "red"), 
+    alpha = 0.2)
+```
+
+# Gráfico de pendientes
+
+<img src="img/pendientes.jpeg" alt="Pendientes" width="400"/>
+
+```r
+# Datos
+PBI <- CGPfunctions::newgdp[16:30, ]
+
+# Gráfico
+CGPfunctions::newggslopegraph(
+  dataframe = PBI, 
+  Times = Year, 
+  Measurement = GDP, 
+  Grouping = Country,
+  Title = "Evolución del PIB",
+  SubTitle = "1970-1979",
+  Caption = "R CHARTS",
+  ThemeChoice = "wsj",
+  DataLabelPadding = 0.2,
+  DataLabelLineSize = 0.5,
+  DataLabelFillColor = "lightblue")
+```
+
 # Gráfico de series
 
 ## Gráfico de barras
@@ -68,7 +710,7 @@ pib2019 |>
 
 ## Gráfico de líneas
 
-<img src="img/lineas_1.jpeg" alt="Lineas" width="400"/>
+<img src="img/series_lineas_1.jpeg" alt="Lineas" width="400"/>
 
 ```r
 # Datos
