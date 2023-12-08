@@ -1,0 +1,39 @@
+---
+title: "Ejemplo"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(shiny)
+
+df <- read_csv("datos2.csv")
+```
+
+## Ejemplo de Shiny con R Markdown
+
+Al usar shiny con R Markdown no se requiere especificar de manera explícita las
+funciones de interfaz de usuario ni la del servidor. Solamente se declaran los
+paneles y su acción.
+
+
+```{r ejemplo, echo=FALSE}
+inputPanel(
+  checkboxGroupInput(inputId = "grupos",
+                     label = "¿Qué grupos se desea mostrar?",
+                     choices = c("a","b","c"),
+                     selected = c("a","b","c"))
+)
+
+renderPlot({
+    
+    plotdf <- filter(df, grupo %in% input$grupos)
+    ggplot(dat = plotdf,
+           aes(x=varX, y=varY, color=grupo)) + geom_point()
+    
+  })
+```
+

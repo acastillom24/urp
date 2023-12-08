@@ -1,0 +1,42 @@
+---
+title: "Shiny en un Dashboard de Flexdashboards"
+output: 
+  flexdashboard::flex_dashboard:
+  orientation: columns
+  vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(ggplot2)
+library(plotly)
+```
+
+Input{.sidebar}
+----------------------------------------------------------------
+### Entrada del usuario
+
+```{r}
+radioButtons(inputId="ncyl",label="Número de cilindros",choices=c(4,6,8))
+```
+
+Column
+----------------------------------------------------------------
+
+### Usando plotly y ggplot
+
+```{r}
+renderPlotly(
+    ggplotly(ggplot(filter(mtcars,cyl==input$ncyl),aes(x=mpg,y=wt))+geom_point())
+)
+```
+
+### Usando solo ggplot
+
+```{r}
+renderPlot(
+  ggplot(filter(mtcars,cyl==input$ncyl),aes(x=mpg,y=wt))+geom_point()
+)
+```

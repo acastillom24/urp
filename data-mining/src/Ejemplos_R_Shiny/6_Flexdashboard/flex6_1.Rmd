@@ -1,0 +1,40 @@
+---
+title: "Dashboard de prueba"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Gráfico 1
+
+```{r}
+ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point()
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Gráfico 2
+
+```{r}
+ggplot(mtcars, aes(x=cyl)) + geom_bar()
+
+```
+
+### Gráfico 3
+
+```{r}
+ggplot(mtcars, aes(y=hp)) + geom_boxplot()
+
+```
+
